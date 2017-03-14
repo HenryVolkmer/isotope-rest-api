@@ -1,11 +1,37 @@
 <?php
-require_once( dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'system' .DIRECTORY_SEPARATOR. 'config' .DIRECTORY_SEPARATOR. 'localconfig.php');
-$yii=dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'composer' . DIRECTORY_SEPARATOR . 'vendor' . DIRECTORY_SEPARATOR . 'yiisoft' . DIRECTORY_SEPARATOR . 'yii' . DIRECTORY_SEPARATOR . 'framework' . DIRECTORY_SEPARATOR . 'yii.php';
+/**
+ * Isotope eCommerce for Contao Open Source CMS
+ *
+ * Copyright (C) 2009-2017 terminal42 gmbh & Isotope eCommerce Workgroup
+ * 
+ * RESTful API for Isotope eCommerce
+ * 
+ * Copyright (C) 2017 Henry Lamorski
+ * 
+ * @author Henry Lamorski <henry.lamorski@mailbox.org>
+ *
+ * @link       https://isotopeecommerce.org
+ * @link       https://github.com/HenryLamorski/isotope-rest-api
+ * @license    https://opensource.org/licenses/lgpl-3.0.html
+ */
+ 
+require_once(
+    dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . 
+    DIRECTORY_SEPARATOR . 'system' .DIRECTORY_SEPARATOR . 
+    'config' . DIRECTORY_SEPARATOR . 'localconfig.php'
+);
+
+$yii=dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . 
+DIRECTORY_SEPARATOR . 'composer' . DIRECTORY_SEPARATOR . 'vendor' . 
+DIRECTORY_SEPARATOR . 'yiisoft' . DIRECTORY_SEPARATOR . 'yii' . 
+DIRECTORY_SEPARATOR . 'framework' . DIRECTORY_SEPARATOR . 'yii.php';
 
 $config = array(
-    'basePath'=>dirname(__FILE__). DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR . 'system' . DIRECTORY_SEPARATOR . 'modules' . DIRECTORY_SEPARATOR . 'isotope_rest_api' . DIRECTORY_SEPARATOR . 'lib',
+    'basePath'=>dirname(__FILE__). DIRECTORY_SEPARATOR . '..' . 
+        DIRECTORY_SEPARATOR . 'system' . DIRECTORY_SEPARATOR . 
+        'modules' . DIRECTORY_SEPARATOR . 'isotope_rest_api',
     'defaultController'=>'rest', 
-    'name'=>'Isotope eCommerce REST-Api',
+    'name'=>'RESTful API for Isotope eCommerce',
     'preload'=>array('log'),
     'import'=>array(
         'application.models.*',
@@ -41,7 +67,4 @@ $config = array(
 );
 
 require_once($yii);
-
-error_reporting(E_ALL ^ E_STRICT);
-ini_set('display_errors', 'On');
 Yii::createWebApplication($config)->run();
