@@ -22,7 +22,7 @@
         "contao": {
             "sources": {
                 "interface": "interface",
-                "lib": "system/modules/isotope-rest-api"
+                "lib": "system/modules/isotope_rest_api"
             }
         }
     }
