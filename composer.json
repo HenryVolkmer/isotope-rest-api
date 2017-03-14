@@ -1,0 +1,27 @@
+{
+    "name": "henrylamorski/isotope-rest-api",
+    "description": "RESTful API for Isotope eCommerce for Contao Open Source CMS",
+    "keywords": ["contao", "rest", "webservice", "interface", "data"],
+    "type": "contao-module",
+    "license": "LGPL-3.0+",
+    "authors": [
+        {
+            "name": "Henry Lamorski",
+            "email": "henry.lamorski@mailbox.org",
+            "homepage": "https://github.com/HenryLamorski/isotope-rest-api",
+            "role": "Developer"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.2",
+        "contao/core": ">=3.2",
+    },
+    "extra": {
+        "contao": {
+            "sources": {
+                "interface": "interface",
+                "lib": "system/modules/isotope-rest-api"
+            }
+        }
+    }
+}
