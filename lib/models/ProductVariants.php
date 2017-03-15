@@ -35,7 +35,7 @@ class ProductVariants extends Product
                     array_map(
                         function($objAttr) use ($objType) {  
                             if(
-                                $objType->isVariant($objAttr->field_name)
+                                true === $objType->isVariant($objAttr->field_name)
                                 && true === $objAttr->hasOptions()
                             ) {
                                 return $objAttr->field_name;  
@@ -54,7 +54,7 @@ class ProductVariants extends Product
                         array_map(
                             function($objAttr) use ($objType) {  
                                 if(
-                                    $objType->isVariant($objAttr->field_name)
+                                    true === $objType->isVariant($objAttr->field_name)
                                     && true !== $objAttr->hasOptions()
                                 ) {
                                     return $objAttr->field_name;  

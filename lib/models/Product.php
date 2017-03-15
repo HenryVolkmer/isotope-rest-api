@@ -74,7 +74,7 @@ class Product extends Generic
                         function($objAttr) use ($objType) {  
                             if(
                                 true === $objAttr->hasOptions() 
-                                && false === $objType->isVariant($objAttr->field_name)
+                                && true === $objType->isVariant($objAttr->field_name)
                             ) {
                                     return $objAttr->field_name;  
                             }
