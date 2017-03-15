@@ -18,6 +18,8 @@
 class Generic extends CActiveRecord
 {
 
+    const CREATE_MISSING_OPTIONS = true;
+    
     public function beforeSave()
     {
         $this->tstamp = time();

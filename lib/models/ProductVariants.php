@@ -21,20 +21,27 @@ class ProductVariants extends Product
 
     public function rules()
     {
+        
+        $arrRules = parent::rules();
+        
+        $objType = $this->getOwner()->getType();
+        
         return array(
+            $arrRules[0], // sku
+            $arrRules[1], // pricetier
             array(
                 implode(
                     ",",
                     array_map(
-                        function($objAttr) {  
+                        function($objAttr) use ($objType) {  
                             if(
-                                $objAttr->variant_option
+                                $objType->isVariant($objAttr->field_name)
                                 && true === $objAttr->hasOptions()
                             ) {
                                 return $objAttr->field_name;  
                             }
                         },
-                        $this->getOwner()->getType()->getObjAttributes()
+                        $objType->getObjAttributes()
                     )
                 ),
                 'checkAttributeOption'                
@@ -45,15 +52,15 @@ class ProductVariants extends Product
                     ",",
                     array_merge(
                         array_map(
-                            function($objAttr) {  
+                            function($objAttr) use ($objType) {  
                                 if(
-                                    $objAttr->variant_option
+                                    $objType->isVariant($objAttr->field_name)
                                     && true !== $objAttr->hasOptions()
                                 ) {
                                     return $objAttr->field_name;  
                                 }
                             },
-                            $this->getOwner()->getType()->getObjAttributes()
+                            $objType->getObjAttributes()
                         ),
                         $this->safeAttr()
                     )

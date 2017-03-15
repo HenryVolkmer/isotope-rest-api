@@ -43,11 +43,17 @@ class Attribute extends Generic
         }           
     }
     
+    public function setOptions()
+    {
+        $this->refresh();
+        $this->options = $this->getRelated('options');         
+    }
+    
     public function getOptions($strIds=null)
     {
         if($this->optionsSource === 'table') {
             if (null === $strIds && !$this->options) {
-                $this->options = $this->getRelated('options');       
+                $this->setOptions();
             } 
             
             if ($strIds) {
@@ -85,6 +91,32 @@ class Attribute extends Generic
             
         }               
         
+    }
+    
+    public function addOptions($arrOptions)
+    {
+        /** we can't create options on a new Instance **/
+        if($this->isNewRecord) {
+            Yii::log(print_r("new record\n",true),"info",CHtml::modelName($this));
+            return null;
+        }
+
+        if($this->optionsSource === 'table') {
+
+            foreach($arrOptions as $strLabel)
+            {
+                $objOption = new AttributeOption;
+                $objOption->pid = $this->id;
+                $objOption->ptable = $this->tableName();
+                $objOption->type = 'option';
+                $objOption->published = 1;
+                $objOption->label = $strLabel;
+                $objOption->save();
+            }
+
+            $this->setOptions();
+
+        }
     }
     
     public static function model($className=__CLASS__)

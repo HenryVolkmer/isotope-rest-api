@@ -49,12 +49,17 @@ class Product extends Generic
     
     public function rules()
     {
+        $objType = $this->getType();
+
         return array(
+            /** rules also in Variants applied **/
+            array('sku','unique','allowEmpty'=>true),
+            array('pricetier','checkPricetier'),
+            
+            /** rules NOT in Variants applied **/
+            array('name,description','required'),
             array('type,pid','numerical','integerOnly'=>true),
             array('type','exists','className'=>'ProductType','attributeName'=>'id','allowEmpty'=>false),
-            array('name,sku,description,pricetier','required'),
-            array('sku','unique'),
-            array('pricetier','checkPricetier'),
             array('variants','checkVariants'),
     
             /** 
@@ -66,14 +71,15 @@ class Product extends Generic
                 implode(
                     ",",
                     array_map(
-                        function($objAttr) {  
+                        function($objAttr) use ($objType) {  
                             if(
                                 true === $objAttr->hasOptions() 
-                                && true !== $objAttr->variant_option) {
+                                && false === $objType->isVariant($objAttr->field_name)
+                            ) {
                                     return $objAttr->field_name;  
-                                }
+                            }
                         },
-                        $this->getType()->getObjAttributes()
+                        $objType->getObjAttributes()
                     )
                 ),
                 'checkAttributeOption'                
@@ -88,13 +94,14 @@ class Product extends Generic
                     ",",
                     array_merge(
                         array_map(
-                            function($objAttr) {
+                            function($objAttr) use ($objType) {
                                 if(true !== $objAttr->hasOptions()
-                                && true !== $objAttr->variant_option) { 
+                                && false === $objType->isVariant($objAttr->field_name)
+                                ) {
                                     return $objAttr->field_name;  
                                 }
                             },
-                            $this->getType()->getObjAttributes()
+                            $objType->getObjAttributes()
                         ),
                         $this->safeAttr()
                     )
@@ -164,7 +171,10 @@ class Product extends Generic
         foreach($this->variants as $key => $arrVariant) {
             $objVariant = new ProductVariants;
             $objVariant->setOwner($this);
+            
             $objVariant->attributes = $arrVariant;
+            
+           
             if(!$objVariant->validate()) {
                 $this->addErrors($objVariant->getErrors());
             }
@@ -175,11 +185,19 @@ class Product extends Generic
     /** check given Attributeoptions for existence **/
     public function checkAttributeOption($attribute,$params)
     {
+
+        #Yii::log(print_r("init checkAttributeOption for $attribute\n",true),"info",CHtml::modelName($this));
+
         $objAttr = $this->getType()->getObjAttribute($attribute);
      
         /** todo: if attribute mandatory, add error **/
-        if(!$this->{$attribute})
+        if(!$this->{$attribute}) {
+         #   Yii::log(print_r("$attribute not found\n",true),"info",CHtml::modelName($this));
             return;
+        }
+        
+        if(!is_array($this->{$attribute}))
+            $this->{$attribute} = array($this->{$attribute});
         
         if(null === $objAttr) {
             $this->addError($attribute,'Attribute '.$attribute.' not found');
@@ -191,26 +209,33 @@ class Product extends Generic
         }
 
         $objAttrOption = $objAttr->getOptions();
-        
+       
         if(!$objAttrOption) {
-            $this->addError($attribute,'Attribute <'.$attribute.'> has no options!');
-            return;
+            
+            if(false === self::CREATE_MISSING_OPTIONS) {
+                $this->addError($attribute,'Attribute <'.$attribute.'> has no options!');
+                return;
+            }
+            
+            /** create the options **/
+            $objAttr->addOptions($this->{$attribute});
         }
 
-        $arrAvailOptions = CHtml::listData($objAttrOption,"id","label");
+        $arrAvailOptions = CHtml::listData($objAttr->getOptions(),"id","label");
         $arrAttributeValToSave = array();
-
-        if(!is_array($this->{$attribute}))
-            $this->{$attribute} = array($this->{$attribute});
-
-        
 
         foreach($this->{$attribute} as $strVal) {
         
-            if(!in_array($strVal,$arrAvailOptions)) {
-                $this->addError($attribute,'given Option <'.$strVal.'> is not in tl_iso_attribute_option or foreigntable available.');
-                return;
-            }
+            if(!in_array($strVal,CHtml::listData($objAttr->getOptions(),"id","label"))) {
+                
+                if(false === self::CREATE_MISSING_OPTIONS) {
+                    $this->addError($attribute,'given Option <'.$strVal.'> is not in tl_iso_attribute_option or foreigntable available.');
+                    return;
+                }
+                /** create the option **/
+                $objAttr->addOptions(array($strVal));
+                $arrAvailOptions = CHtml::listData($objAttr->getOptions(),"id","label");
+            } 
             
             $optionId = array_search($strVal,$arrAvailOptions);
             $arrAttributeValToSave[$optionId] = $arrAvailOptions[$optionId];
@@ -222,6 +247,11 @@ class Product extends Generic
     
     public function checkPricetier($attribute,$params) 
     {
+
+        if(!$this->pricetier) {
+            return;
+        }
+        
         $objPrice = new Price;
         $objPrice->attributes = $this->pricetier;
         

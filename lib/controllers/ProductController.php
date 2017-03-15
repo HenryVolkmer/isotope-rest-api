@@ -28,13 +28,6 @@ class ProductController extends Controller
         if ($arrProducts) {
             foreach($arrProducts as $objProduct) {
                 
-                /*
-                if(!$objProduct->getType()) {
-                    Yii::log(print_r($objProduct,true),"info",CHtml::modelName($this));
-                    continue;
-                }
-                */
-                
                 $arrData[] = array_merge(
                     $objProduct->getCompiledAttributes(),
                     array(
@@ -56,7 +49,13 @@ class ProductController extends Controller
     public function post($arrPayload=array())
     {
         if (!$arrPayload) {
-            Yii::app()->end(); 
+            header("HTTP/1.0 400 Bad Request");
+            echo CJSON::encode(
+                array(
+                    'error' => 'No data submitted. Nothing to do ...'
+                )
+            );
+            Yii::app()->end();
         }
 
         $arrErrors = array();
@@ -81,20 +80,18 @@ class ProductController extends Controller
        
             $objProduct->attributes = $arrData;
             
-            Yii::log(print_r($objProduct->rules(),true),"info",CHtml::modelName($this));
-            
+                        
             if (!$objProduct->save()) {
                 $arrErrors[] = array_merge(
                     array('line'=>$key),
                     $objProduct->getErrors()
                 );
-            } else {
-                echo "<pre>"; print_r("saved!"); echo "</pre>"; 
             }
+            
         }
         
         if ($arrErrors) {
-            header('Content-Type: application/json');        
+            header("HTTP/1.0 400 Bad Request");        
             echo CJSON::encode($arrErrors);
             Yii::app()->end();
         }

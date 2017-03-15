@@ -25,6 +25,19 @@ class ProductType extends Generic
         return 'tl_iso_producttype';
 	}
     
+
+    /** checks if a Attributename is variant_attribute **/
+    public function isVariant($strAttrName)
+    {
+        if(isset($this->variant_attributes[$strAttrName])) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    
+    
     public function afterFind()
     {
         if ($this->attributes) {
@@ -38,7 +51,8 @@ class ProductType extends Generic
         } else {
             $this->variant_attributes = array();
         }
-            
+        
+           
         return parent::afterFind();
     }
     
