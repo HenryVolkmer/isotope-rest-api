@@ -166,7 +166,7 @@ class Product extends Generic
             $objVariant->setOwner($this);
             $objVariant->attributes = $arrVariant;
             if(!$objVariant->validate()) {
-                $this->addError($attribute,"index ".$key.": ".$objVariant->getError());
+                $this->addErrors($objVariant->getErrors());
             }
         }
         
