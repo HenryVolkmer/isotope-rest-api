@@ -14,20 +14,27 @@
  * @link       https://github.com/HenryLamorski/isotope-rest-api
  * @license    https://opensource.org/licenses/lgpl-3.0.html
  */
- 
-require_once(
-    dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . 
-    DIRECTORY_SEPARATOR . 'system' .DIRECTORY_SEPARATOR . 
-    'config' . DIRECTORY_SEPARATOR . 'localconfig.php'
-);
 
-$yii=dirname(__FILE__) . DIRECTORY_SEPARATOR . '..' . 
-DIRECTORY_SEPARATOR . 'composer' . DIRECTORY_SEPARATOR . 'vendor' . 
+$path_not_symlinked  = dirname(__FILE__,2) . DIRECTORY_SEPARATOR . 'system' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'localconfig.php';
+$path_symlinked = dirname(__FILE__,5) . DIRECTORY_SEPARATOR . 'system' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'localconfig.php';
+
+if(file_exists($path_not_symlinked)) {
+    require_once($path_not_symlinked);
+    define('TL_ROOT', dirname(__FILE__,2));
+} elseif(file_exists($path_symlinked)) {
+    require_once($path_symlinked);
+    define('TL_ROOT', dirname(__FILE__,5));
+} else {
+    DIE('cant find '.$path_not_symlinked.' or '.$path_symlinked);
+}
+
+
+$yii= TL_ROOT . DIRECTORY_SEPARATOR . 'composer' . DIRECTORY_SEPARATOR . 'vendor' . 
 DIRECTORY_SEPARATOR . 'yiisoft' . DIRECTORY_SEPARATOR . 'yii' . 
 DIRECTORY_SEPARATOR . 'framework' . DIRECTORY_SEPARATOR . 'yii.php';
 
 $config = array(
-    'basePath'=>dirname(__FILE__). DIRECTORY_SEPARATOR . '..' . 
+    'basePath'=>TL_ROOT . 
         DIRECTORY_SEPARATOR . 'system' . DIRECTORY_SEPARATOR . 
         'modules' . DIRECTORY_SEPARATOR . 'isotope_rest_api',
     'defaultController'=>'rest', 
