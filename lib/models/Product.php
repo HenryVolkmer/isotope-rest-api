@@ -316,7 +316,7 @@ class Product extends Generic
                 continue;
             }
                         
-            $fileDest = dirname(__FILE__, 5). DIRECTORY_SEPARATOR . 'isotope' . DIRECTORY_SEPARATOR . strtolower(substr($arrImgData['filename'],0,1));
+            $fileDest = TL_ROOT . DIRECTORY_SEPARATOR . 'isotope' . DIRECTORY_SEPARATOR . strtolower(substr($arrImgData['filename'],0,1));
             if(!is_dir($fileDest)) {
                 mkdir($fileDest);
             }
