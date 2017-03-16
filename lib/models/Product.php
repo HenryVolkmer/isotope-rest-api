@@ -30,6 +30,9 @@ class Product extends Generic
     
     /** store variants array (json input) **/
     public $variants;
+    
+    /** afterSave: create options **/
+    public $_arrAfterSaveAttr = array();
         
     public function sysCols()
     {
@@ -182,17 +185,24 @@ class Product extends Generic
         
     }
     
-    /** check given Attributeoptions for existence **/
+    /** 
+     * check given Attributeoptions for existence 
+     * if the constant CREATE_MISSING_OPTIONS === true, all missing
+     * Options will be created.
+     * Because of Isotope Database terminology, some attributetypes can
+     * be created without Product and on the otherside there are attributes
+     * who need a PrimaryKey (Product-id) for working. Therfore, for this
+     * AttributeTypes the options can only be created afterSave in Product.
+     * Those Attributes are stored in $this->_arrAfterSaveAttr and processed
+     * in self::afterSave()
+     **/
     public function checkAttributeOption($attribute,$params)
     {
-
-        #Yii::log(print_r("init checkAttributeOption for $attribute\n",true),"info",CHtml::modelName($this));
-
         $objAttr = $this->getType()->getObjAttribute($attribute);
-     
+        $objAttr->objProduct = $this;
+
         /** todo: if attribute mandatory, add error **/
         if(!$this->{$attribute}) {
-         #   Yii::log(print_r("$attribute not found\n",true),"info",CHtml::modelName($this));
             return;
         }
         
@@ -208,6 +218,12 @@ class Product extends Generic
             return;
         }
 
+        /** we cant handle options without a Pk, we do it afterSave() **/
+        if($this->isNewRecord && $objAttr->optionsSource === 'product') {
+            $this->_arrAfterSaveAttr[] = $attribute;
+            return;
+        }
+
         $objAttrOption = $objAttr->getOptions();
        
         if(!$objAttrOption) {
@@ -216,13 +232,20 @@ class Product extends Generic
                 $this->addError($attribute,'Attribute <'.$attribute.'> has no options!');
                 return;
             }
-            
+        
             /** create the options **/
             $objAttr->addOptions($this->{$attribute});
         }
 
         $arrAvailOptions = CHtml::listData($objAttr->getOptions(),"id","label");
         $arrAttributeValToSave = array();
+
+        if($attribute == 'uom_qty_selectfield' && $this->sku == "6968") {
+        
+            Yii::log("in attr: ".print_r($this->uom_qty_selectfield,true),"info",CHtml::modelName($this));
+            
+        }
+
 
         foreach($this->{$attribute} as $strVal) {
         
@@ -232,11 +255,12 @@ class Product extends Generic
                     $this->addError($attribute,'given Option <'.$strVal.'> is not in tl_iso_attribute_option or foreigntable available.');
                     return;
                 }
+                
                 /** create the option **/
                 $objAttr->addOptions(array($strVal));
                 $arrAvailOptions = CHtml::listData($objAttr->getOptions(),"id","label");
             } 
-            
+           
             $optionId = array_search($strVal,$arrAvailOptions);
             $arrAttributeValToSave[$optionId] = $arrAvailOptions[$optionId];
         }
@@ -351,6 +375,19 @@ class Product extends Generic
         
         $this->saveAttributes(array('alias'=>$this->alias));
         
+        /** create options **/
+        if($this->sku == '6968') {
+            Yii::log("afterSave: ".print_r($this->_arrAfterSaveAttr,true),"info",CHtml::modelName($this));
+        }
+        
+        if($this->_arrAfterSaveAttr) {
+            foreach($this->_arrAfterSaveAttr as $attribute) {
+                $objAttr = $this->getType()->getObjAttribute($attribute);
+                $objAttr->objProduct = $this;
+                $objAttr->addOptions($this->{$attribute});
+            }            
+        }        
+        
         if(true === $setNewRecord) {
             $this->setIsNewRecord(true);
         }
@@ -451,7 +488,7 @@ class Product extends Generic
         }
 
         /** load the attribute model **/
-        $objAttr = Attribute::model()->findByAttributes(
+        $objAttr = Attribute::model()->setInitParms(array('objProduct'=>$this))->findByAttributes(
             array('name'=>$name)
         );
         

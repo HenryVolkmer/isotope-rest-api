@@ -26,8 +26,20 @@ class Generic extends CActiveRecord
         return parent::beforeSave();
     }
 
+    public function setInitParms($arr=array())
+    {
+        if(!$arr)
+            return $this;
+
+        foreach($arr as $attr => $value)
+            $this->{$attr} = $value;
+
+        return $this;
+    }
+
     public static function model($className=__CLASS__)
 	{
         return parent::model($className);
 	}
+    
 }

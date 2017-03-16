@@ -77,9 +77,7 @@ class ProductController extends Controller
 
             $objProduct->setType($arrData['type']);
 
-            if($key === 0)
-                Yii::log(print_r($objProduct->rules(),true),"info",CHtml::modelName($this));
-       
+      
             $objProduct->attributes = $arrData;
             
                         

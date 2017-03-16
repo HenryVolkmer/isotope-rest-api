@@ -19,6 +19,7 @@ class Attribute extends Generic
 {
     /** array contain AttributeOptions-Objects from tl_iso_attribute_option **/
     public $options;
+    public $objProduct;
 
     public function tableName()
     {
@@ -43,17 +44,31 @@ class Attribute extends Generic
         }           
     }
     
-    public function setOptions()
+    public function setOptions($source='table')
     {
         $this->refresh();
-        $this->options = $this->getRelated('options');         
+        if($source === 'table') {
+            $this->options = $this->getRelated('options');
+            return;
+        }
+        
+        if($source === 'product') {
+            $c=new CDbCriteria;
+            $c->compare("pid",$this->objProduct->id);
+            $c->compare("ptable",$this->objProduct->tableName());
+            $c->compare("field_name",$this->field_name);
+            $this->options = AttributeOption::model()->findAll($c);
+            return;
+        }
+        
+        
     }
     
     public function getOptions($strIds=null)
     {
-        if($this->optionsSource === 'table') {
+        if(in_array($this->optionsSource, array('table','product'))) {
             if (null === $strIds && !$this->options) {
-                $this->setOptions();
+                $this->setOptions($this->optionsSource);
             } 
             
             if ($strIds) {
@@ -97,12 +112,10 @@ class Attribute extends Generic
     {
         /** we can't create options on a new Instance **/
         if($this->isNewRecord) {
-            Yii::log(print_r("new record\n",true),"info",CHtml::modelName($this));
             return null;
         }
 
         if($this->optionsSource === 'table') {
-
             foreach($arrOptions as $strLabel)
             {
                 $objOption = new AttributeOption;
@@ -113,10 +126,34 @@ class Attribute extends Generic
                 $objOption->label = $strLabel;
                 $objOption->save();
             }
-
-            $this->setOptions();
-
         }
+        
+        if($this->optionsSource === 'product') {
+            
+            /** dont save without valid pid **/
+            if($this->objProduct->isNewRecord) {
+                return;
+            }
+            
+            foreach($arrOptions as $strLabel)
+            {
+                $objOption = new AttributeOption;
+                $objOption->pid = $this->objProduct->id;
+                $objOption->ptable = $this->objProduct->tableName();
+                $objOption->field_name = $this->field_name;
+                $objOption->type = 'option';
+                $objOption->published = 1;
+                $objOption->label = $strLabel;
+                $objOption->save();
+                
+            }
+        }
+        
+        $this->setOptions($this->optionsSource);
+        
+        
+        
+        
     }
     
     public static function model($className=__CLASS__)
