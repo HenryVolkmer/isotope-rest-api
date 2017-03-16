@@ -15,7 +15,6 @@
     "require": {
         "php": ">=5.3.2",
         "contao/core": ">=3.2",
-        "isotope/isotope-core": "dev-hotfix/2.4.1",
         "yiisoft/yii": "dev-master"
     },
     "extra": {
