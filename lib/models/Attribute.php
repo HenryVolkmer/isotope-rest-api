@@ -37,7 +37,7 @@ class Attribute extends Generic
     
     public function hasOptions()
     {
-        if ($this->optionsSource) {
+        if (in_array($this->optionsSource,array('table','product','foreignKey'))) {
             return true;
         } else {
             return null;
