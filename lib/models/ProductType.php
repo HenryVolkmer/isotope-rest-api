@@ -29,7 +29,10 @@ class ProductType extends Generic
     /** checks if a Attributename is variant_attribute **/
     public function isVariant($strAttrName)
     {
-        if(isset($this->variant_attributes[$strAttrName])) {
+        if(
+            isset($this->variant_attributes[$strAttrName]) 
+            && $this->variant_attributes[$strAttrName]['enabled'] === 1
+        ) {
             return true;
         } else {
             return false;

@@ -98,7 +98,7 @@ class Product extends Generic
                     array_merge(
                         array_map(
                             function($objAttr) use ($objType) {
-                                if(true !== $objAttr->hasOptions()
+                                if(!$objAttr->hasOptions()
                                 && false === $objType->isVariant($objAttr->field_name)
                                 ) {
                                     return $objAttr->field_name;  
