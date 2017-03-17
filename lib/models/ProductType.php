@@ -31,7 +31,7 @@ class ProductType extends Generic
     {
         if(
             isset($this->variant_attributes[$strAttrName]) 
-            && $this->variant_attributes[$strAttrName]['enabled'] === 1
+            && $this->variant_attributes[$strAttrName]['enabled'] == 1
         ) {
             return true;
         } else {
