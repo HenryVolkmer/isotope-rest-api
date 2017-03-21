@@ -19,6 +19,15 @@ class ProductVariants extends Product
 {
     private $owner;
 
+    /** safe for massive assignment **/
+    public function safeAttr()
+    {
+        $arr = parent::safeAttr();
+        $arr[0] += ',name';
+        return $arr;
+    }
+
+
     public function rules()
     {
         
