@@ -149,11 +149,25 @@ class Attribute extends Generic
             }
         }
         
+        if ($this->optionsSource === 'foreignKey') {
+            
+            $arrSplit = explode(".",$this->foreignKey);
+            $tbl = $arrSplit[0];
+            $fld = $arrSplit[1];
+            
+            $arrFields = array();
+            foreach($arrOptions as $strLabel) {
+                Yii::app()->db->createCommand()->insert(
+                    $tbl,
+                    array(
+                        $fld => $strLabel,
+                    )
+                );    
+            }            
+            
+        }
+        
         $this->setOptions($this->optionsSource);
-        
-        
-        
-        
     }
     
     public static function model($className=__CLASS__)
