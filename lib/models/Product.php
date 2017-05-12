@@ -42,7 +42,7 @@ class Product extends Generic
     /** safe for massive assignment **/
     public function safeAttr()
     {
-        return array('gid,images,published,meta_title,meta_description,meta_keywords,shipping_weight,shipping_exempt,protected,protected,groups,guests,cssID,start,stop,orderPages');
+        return array('gid,images,published,meta_title,meta_description,meta_keywords,shipping_weight,shipping_exempt,teaser,protected,protected,groups,guests,cssID,start,stop,orderPages');
     }
 
     public function tableName()
