@@ -311,7 +311,7 @@ class Product extends Generic
                 continue;
             }
             
-            $fileSrc = $arrImgData['src'] . DIRECTORY_SEPARATOR . $arrImgData['filename'];
+            $fileSrc = TL_ROOT . DIRECTORY_SEPARATOR . $arrImgData['src'] . DIRECTORY_SEPARATOR . $arrImgData['filename'];
             if(!file_exists($fileSrc)) {
                 continue;
             }
