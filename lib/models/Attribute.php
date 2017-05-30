@@ -116,14 +116,20 @@ class Attribute extends Generic
         }
 
         if($this->optionsSource === 'table') {
-            foreach($arrOptions as $strLabel)
+            foreach($arrOptions as $mixed)
             {
                 $objOption = new AttributeOption;
                 $objOption->pid = $this->id;
                 $objOption->ptable = $this->tableName();
                 $objOption->type = 'option';
                 $objOption->published = 1;
-                $objOption->label = $strLabel;
+                
+                if(is_array($mixed)) {
+                    $objOption->attributes = $mixed;
+                } else {
+                    $objOption->label = $mixed;   
+                }
+                
                 $objOption->save();
             }
         }
@@ -135,7 +141,7 @@ class Attribute extends Generic
                 return;
             }
             
-            foreach($arrOptions as $strLabel)
+            foreach($arrOptions as $mixed)
             {
                 $objOption = new AttributeOption;
                 $objOption->pid = $this->objProduct->id;
@@ -143,7 +149,13 @@ class Attribute extends Generic
                 $objOption->field_name = $this->field_name;
                 $objOption->type = 'option';
                 $objOption->published = 1;
-                $objOption->label = $strLabel;
+                
+                if(is_array($mixed)) {
+                    $objOption->attributes = $mixed;
+                } else {
+                    $objOption->label = $mixed;   
+                }
+               
                 $objOption->save();
                 
             }

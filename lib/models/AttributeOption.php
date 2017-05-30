@@ -23,6 +23,14 @@ class AttributeOption extends Generic
 	}
 
   
+    public function rules()
+    {
+        return array(
+            array('isDefault,langPid','numerical','integerOnly'=>true),
+            array('label,price,language', 'safe'),
+        );
+    }
+  
     public static function model($className=__CLASS__)
 	{
         return parent::model($className);
