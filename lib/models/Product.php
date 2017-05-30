@@ -238,14 +238,6 @@ class Product extends Generic
         }
 
         $arrAvailOptions = CHtml::listData($objAttr->getOptions(),"id","label");
-        $arrAttributeValToSave = array();
-
-        if($attribute == 'uom_qty_selectfield' && $this->sku == "6968") {
-        
-            Yii::log("in attr: ".print_r($this->uom_qty_selectfield,true),"info",CHtml::modelName($this));
-            
-        }
-
 
         foreach($this->{$attribute} as $strVal) {
         
@@ -376,10 +368,6 @@ class Product extends Generic
         $this->saveAttributes(array('alias'=>$this->alias));
         
         /** create options **/
-        if($this->sku == '6968') {
-            Yii::log("afterSave: ".print_r($this->_arrAfterSaveAttr,true),"info",CHtml::modelName($this));
-        }
-        
         if($this->_arrAfterSaveAttr) {
             foreach($this->_arrAfterSaveAttr as $attribute) {
                 $objAttr = $this->getType()->getObjAttribute($attribute);
