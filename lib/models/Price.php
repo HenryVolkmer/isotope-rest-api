@@ -101,21 +101,16 @@ class Price extends Generic
     public function afterSave()
     {
 
-        foreach($this->tiers as $arrTier) {
-            
-            if(isset($arrTier['id'])) {
-                $objTiers = PriceTiers::model()->findByPk($arrTier['id']);
-                if(!$objTiers) {
-                    $objTiers = new PriceTiers();
-                }
-            } else {
-                $objTiers = new PriceTiers();                
-            }
+		/** rebuild tiers on each save! **/
+		$c = new CDbCriteria;
+		$c->compare('t.pid',$this->id);
+		PriceTiers::model()->deleteAll($c);
 
-            $objTiers->attributes = $arrTier;
-            $objTiers->pid = $this->id;
-            $objTiers->save();
-            
+        foreach($this->tiers as $arrTier) {
+			$objTiers = new PriceTiers();                
+			$objTiers->attributes = $arrTier;
+			$objTiers->pid = $this->id;
+			$objTiers->save();
         }
         
         return parent::afterSave();

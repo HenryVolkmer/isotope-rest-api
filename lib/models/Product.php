@@ -115,6 +115,14 @@ class Product extends Generic
         );        
     }
     
+    public function findBySku($sku)
+	{
+		$c = new CDbCriteria;
+		$c->compare('t.sku',$sku);
+		$this->getDbCriteria()->mergeWith($c);
+		return $this;
+	}
+    
     public function relations()
     {
         /** product_type **/
@@ -394,6 +402,11 @@ class Product extends Generic
                     if(!$objVariant) {
                         $objVariant = new ProductVariants();
                     }
+                } elseif (isset($arrVariant['sku']) {
+					$objVariant = ProductVariants::model()->findBySku($arrVariant['sku']);
+                    if(!$objVariant) {
+                        $objVariant = new ProductVariants();
+                    }                
                 } else {
                     $objVariant = new ProductVariants();               
                 }

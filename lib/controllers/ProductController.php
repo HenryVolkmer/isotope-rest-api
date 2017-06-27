@@ -71,6 +71,14 @@ class ProductController extends Controller
                 if (!$objProduct) {
                     $objProduct = new Product;
                 }
+            } elseif(isset($arrData['sku']) && $arrData['sku']) {
+				$objProduct = Product::model()->findBySku($arrData['sku']);
+                if (!$objProduct) {
+                    $objProduct = new Product;
+                    Yii::log(print_r("findBySku(".$arrData['sku']."): NO PK FOUND!\n",true),'info',CHtml::modelName($this));
+                } else {
+					Yii::log(print_r("findBySku(".$arrData['sku']."): pk found: ".$objProduct->id . "\n",true),'info',CHtml::modelName($this));
+				}
             } else {
                 $objProduct = new Product;
             }
