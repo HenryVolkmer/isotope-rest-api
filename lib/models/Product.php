@@ -31,6 +31,9 @@ class Product extends Generic
     /** store variants array (json input) **/
     public $variants;
     
+    /** @var array related related = ['category'=>1, products => 1,2,3,4]; **/
+    public $related;
+    
     /** afterSave: create options **/
     public $_arrAfterSaveAttr = array();
         
@@ -42,7 +45,7 @@ class Product extends Generic
     /** safe for massive assignment **/
     public function safeAttr()
     {
-        return array('gid,images,published,meta_title,meta_description,meta_keywords,shipping_weight,shipping_exempt,teaser,protected,protected,groups,guests,cssID,start,stop,orderPages');
+        return array('related,gid,images,published,meta_title,meta_description,meta_keywords,shipping_weight,shipping_exempt,teaser,protected,protected,groups,guests,cssID,start,stop,orderPages');
     }
 
     public function tableName()
@@ -111,6 +114,7 @@ class Product extends Generic
                 ),
                 'safe'                
             ),
+            
 
         );        
     }
@@ -382,7 +386,17 @@ class Product extends Generic
                 $objAttr->objProduct = $this;
                 $objAttr->addOptions($this->{$attribute});
             }            
-        }        
+        }     
+        
+        /** related **/
+        if($this->related) {
+		
+			$objRela = new Related;
+			$objRela->attributes = $this->related;
+			$objRela->pid = $this->id;
+			$objRela->save();
+		
+		}
         
         if(true === $setNewRecord) {
             $this->setIsNewRecord(true);
