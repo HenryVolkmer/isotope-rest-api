@@ -126,7 +126,8 @@ class Product extends Generic
 		$this->getDbCriteria()->mergeWith($c);
 		return $this;
 	}
-    
+	
+   
     public function relations()
     {
         /** product_type **/
@@ -184,7 +185,22 @@ class Product extends Generic
         }
 
         foreach($this->variants as $key => $arrVariant) {
-            $objVariant = new ProductVariants;
+			
+			if(isset($arrVariant['id'])) {
+				$objVariant = ProductVariants::model()->findByPk($arrVariant['id']);
+				if(!$objVariant) {
+					$objVariant = new ProductVariants();
+				}
+			} elseif (isset($arrVariant['sku'])) {
+				$objVariant = ProductVariants::model()->findBySku($arrVariant['sku'])->find();
+				if(!$objVariant) {
+					$objVariant = new ProductVariants();
+				} 
+			} else {
+				$objVariant = new ProductVariants();               
+			}
+			
+            #$objVariant = new ProductVariants;
             $objVariant->setOwner($this);
             
             $objVariant->attributes = $arrVariant;
@@ -308,14 +324,16 @@ class Product extends Generic
         if(!$this->images || !is_array($this->images)) {
             return;
         }
+        
         $arrFiles=array();
+        
         foreach($this->images as $arrImgData) {
             
             if(!isset($arrImgData['src']) || !isset($arrImgData['filename'])) {
                 continue;
             }
             
-            $fileSrc = TL_ROOT . DIRECTORY_SEPARATOR . $arrImgData['src'] . DIRECTORY_SEPARATOR . $arrImgData['filename'];
+            $fileSrc = $arrImgData['src'] . DIRECTORY_SEPARATOR . $arrImgData['filename'];
             if(!file_exists($fileSrc)) {
                 continue;
             }
@@ -329,7 +347,7 @@ class Product extends Generic
                 $arrFiles[] = array(
                     'src'=>$arrImgData['filename']
                 );
-            }
+            } 
         }
         
         $this->images = $arrFiles;
@@ -416,8 +434,8 @@ class Product extends Generic
                     if(!$objVariant) {
                         $objVariant = new ProductVariants();
                     }
-                } elseif (isset($arrVariant['sku']) {
-					$objVariant = ProductVariants::model()->findBySku($arrVariant['sku']);
+                } elseif (isset($arrVariant['sku'])) {
+					$objVariant = ProductVariants::model()->findBySku($arrVariant['sku'])->find();
                     if(!$objVariant) {
                         $objVariant = new ProductVariants();
                     }                

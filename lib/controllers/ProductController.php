@@ -72,13 +72,10 @@ class ProductController extends Controller
                     $objProduct = new Product;
                 }
             } elseif(isset($arrData['sku']) && $arrData['sku']) {
-				$objProduct = Product::model()->findBySku($arrData['sku']);
+				$objProduct = Product::model()->findBySku($arrData['sku'])->find();
                 if (!$objProduct) {
                     $objProduct = new Product;
-                    Yii::log(print_r("findBySku(".$arrData['sku']."): NO PK FOUND!\n",true),'info',CHtml::modelName($this));
-                } else {
-					Yii::log(print_r("findBySku(".$arrData['sku']."): pk found: ".$objProduct->id . "\n",true),'info',CHtml::modelName($this));
-				}
+                } 
             } else {
                 $objProduct = new Product;
             }
@@ -90,6 +87,7 @@ class ProductController extends Controller
             
                         
             if (!$objProduct->save()) {
+				Yii::log(print_r($objProduct->getErrors() ,true),'info',CHtml::modelName($this));
                 $arrErrors[] = array_merge(
                     array('line'=>$key),
                     $objProduct->getErrors()

@@ -103,7 +103,7 @@ class Price extends Generic
 
 		/** rebuild tiers on each save! **/
 		$c = new CDbCriteria;
-		$c->compare('t.pid',$this->id);
+		$c->compare('pid',$this->id);
 		PriceTiers::model()->deleteAll($c);
 
         foreach($this->tiers as $arrTier) {
