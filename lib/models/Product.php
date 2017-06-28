@@ -362,9 +362,10 @@ class Product extends Generic
         
         $c=new CDbCriteria;
         $c->compare('alias',$this->alias);
+		$c->compare('id','<>'.$this->id);
         
-        if (Product::model()->count($c) > 1) {
-            $this->alias .= '-' . $this->id; 
+        if (Product::model()->count($c) >= 1) {
+            $this->alias .= '.' . $this->id; 
         }
         
     }
