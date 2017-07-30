@@ -59,7 +59,7 @@ class Product extends Generic
 
         return array(
             /** rules also in Variants applied **/
-            array('sku','unique','allowEmpty'=>true),
+            array('sku,alias','unique','allowEmpty'=>true),
             array('pricetier','checkPricetier'),
             
             /** rules NOT in Variants applied **/
@@ -338,14 +338,16 @@ class Product extends Generic
                 continue;
             }
                         
-            $fileDest = TL_ROOT . DIRECTORY_SEPARATOR . 'isotope' . DIRECTORY_SEPARATOR . strtolower(substr($arrImgData['filename'],0,1));
+            $fileDest		= TL_ROOT . DIRECTORY_SEPARATOR . 'isotope' . DIRECTORY_SEPARATOR . strtolower(substr($arrImgData['filename'],0,1));
+            $fileDestName 	= strtolower($arrImgData['filename']);
+            
             if(!is_dir($fileDest)) {
                 mkdir($fileDest);
             }
             
-            if(copy($fileSrc, $fileDest . DIRECTORY_SEPARATOR . $arrImgData['filename'])) {
+            if(copy($fileSrc, $fileDest . DIRECTORY_SEPARATOR . $fileDestName)) {
                 $arrFiles[] = array(
-                    'src'=>$arrImgData['filename']
+                    'src'=>$fileDestName
                 );
             } 
         }
