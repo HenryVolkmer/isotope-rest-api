@@ -410,8 +410,10 @@ class Product extends Generic
         }     
         
         /** related **/
+        $cRelated = new CDbCriteria;
+        $cRelated->compare('pid',$this->id);
+        Related::model()->deleteAll($cRelated);
         if($this->related) {
-		
 			$objRela = new Related;
 			$objRela->attributes = $this->related;
 			$objRela->pid = $this->id;
