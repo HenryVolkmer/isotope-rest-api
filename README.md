@@ -5,7 +5,7 @@ since contao version 3.5, you can install the composer-client direct
 via contao install-tool (/contao/install.php).
 
 If composer is installed, you have to add my git-repo to your sources.
-To achive this task follow this steps:
+To achieve this task, follow this steps:
 
 1. click "Package management" -> settings -> Experts mode
 2. add in section "repositories" this piece of code and click "save"
@@ -36,7 +36,10 @@ https://your-domain.de/interface/product/
 Please note: fetching the whole product-db consumes a lot of memory!
 If you get a error 500, check your Webserver logfile and php.ini.
 
-### complete script with php-curl
+### update/create script with php-curl
+
+if you provide the "id"-Key, a update will be performed.
+Therfore, is there no "id"-Key, a new record will be saved.
 
 ``` 
 <?php
