@@ -15,18 +15,26 @@
  * @license    https://opensource.org/licenses/lgpl-3.0.html
  */
 
-$path_not_symlinked  = dirname(__FILE__,2) . DIRECTORY_SEPARATOR . 'system' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'localconfig.php';
-$path_symlinked = dirname(__FILE__,6) . DIRECTORY_SEPARATOR . 'system' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'localconfig.php';
+function dirname2($path, $levels = 1) {
+    while ($levels--) {
+        $path = dirname($path);
+    }
+    return $path;
+}
+
+$path_not_symlinked  = dirname2(__FILE__,2) . DIRECTORY_SEPARATOR . 'system' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'localconfig.php';
+$path_symlinked = dirname2(__FILE__,6) . DIRECTORY_SEPARATOR . 'system' . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'localconfig.php';
 
 if(file_exists($path_not_symlinked)) {
     require_once($path_not_symlinked);
-    define('TL_ROOT', dirname(__FILE__,2));
+    define('TL_ROOT', dirname2(__FILE__,2));
 } elseif(file_exists($path_symlinked)) {
     require_once($path_symlinked);
-    define('TL_ROOT', dirname(__FILE__,6));
+    define('TL_ROOT', dirname2(__FILE__,6));
 } else {
     DIE('cant find '.$path_not_symlinked.' or '.$path_symlinked);
 }
+
 
 
 $yii= TL_ROOT . DIRECTORY_SEPARATOR . 'composer' . DIRECTORY_SEPARATOR . 'vendor' . 
