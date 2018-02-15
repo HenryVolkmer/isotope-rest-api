@@ -17,6 +17,12 @@ To achieve this task, follow this steps:
 	"url": "https://github.com/HenryLamorski/isotope-rest-api.git"
 }
 ```
+or use the "vcs" type for not using  proc_open which might be not available on your PHP installation
+
+        {
+            "url": "https://github.com/HenryLamorski/isotope-rest-api",
+            "type": "vcs"
+        }
 
 
 3. search in Package management in Backend for "henrylamorski/isotope-rest-api" and install it.
