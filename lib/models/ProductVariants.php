@@ -23,7 +23,7 @@ class ProductVariants extends Product
     public function safeAttr()
     {
         $arr = parent::safeAttr();
-        $newStr = $arr[0] . ',name,fallback';
+        $newStr = $arr[0] . ',name,fallback,description';
         return array($newStr);
     }
 
